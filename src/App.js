@@ -97,14 +97,31 @@ function Launch({ launch }) {
   ) : (
     <i className="icon mdi mdi-bomb" />
   );
-  
 
+  const url = launch.links.video_link
+  const videoIdGrabber = (url) => {
+    // eslint-disable-next-line
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    if (url !== null) {
+    const match = url.match(regExp);
+    console.log('match is', match)
+      if (match && match[2].length === 11) {
+          return match[2];
+      } else {
+          return 'error';
+      }
+    } else {
+      return 'error'
+    }
+    }
+    
+    const videoId = videoIdGrabber(url)
+    //const videoId = videoIdGrabber(launch.links.video_link)
   
-  
-
-
+    console.log(videoId)
 
   return (
+    
     <li className="timeline-item timeline-item-detailed right">
       <div className="timeline-content timeline-type file">
         <div className="timeline-icon">{launchIcon}</div>
@@ -122,9 +139,10 @@ function Launch({ launch }) {
           <p>{launch.details}</p>
         </div>
         <div className="timeline-video">
-          <iframe title={launch.mission_name} src="//www.youtube.com/embed/${launchVideoId}">
-          </iframe>
-          
+          <iframe 
+          title={launch.mission_name} 
+          src={"http://www.youtube.com/embed/${videoId}"}>
+          </iframe> 
         </div>
       </div>
     </li>
