@@ -78,12 +78,22 @@ function Launches({ launches }) {
     const date = launch.launch_date_utc.slice(0, 10);
     list[date] = list[date] || [];
     list[date].push(launch);
-    console.log(launch.launch_date_utc)
-    console.log('Object.keys(list).sort() is', Object.keys(list).sort())
+
+    //1. create empty object that will hold sorted list object
     const sortedList = {}
-    Object.keys(list).sort().forEach(key => {
-      sortedList[key] = list [key]
+    
+    //2. ceate array of list's keys (the dates), then
+    Object.keys(list)
+    //3. then sort it
+    .sort()
+    //4. then create a new object by iterating through each
+    // array item, finding the corresponding launch objects in 
+    //the list object, and assigning this all to the 
+    // sortedList object
+    .forEach(key => {
+      sortedList[key] = list[key]
     })
+    //5. return the sortedList object 
     return sortedList;
   }, {});
 
