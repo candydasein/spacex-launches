@@ -3,6 +3,7 @@ import './App.css';
 import { GraphQLClient } from 'graphql-request';
 import { useEffect, useState } from 'react';
 
+//.links.video_link call to query
 const launchesQuery = `{
   launches {
     id
@@ -89,16 +90,17 @@ function Launches({ launches }) {
   );
 }
 
-
-
 function Launch({ launch }) {
   const launchIcon = launch.launch_success ? (
     <i className="icon mdi mdi-rocket" />
   ) : (
     <i className="icon mdi mdi-bomb" />
   );
+  
 
-  const url = launch.links.video_link
+  const youTubeUrl = launch.links.video_link
+
+  //Take YouTube link
   const videoIdGrabber = (url) => {
     // eslint-disable-next-line
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -115,7 +117,7 @@ function Launch({ launch }) {
     }
     }
     
-    const videoId = videoIdGrabber(url)
+    const videoId = videoIdGrabber(youTubeUrl)
     //const videoId = videoIdGrabber(launch.links.video_link)
   
     console.log(videoId)
