@@ -15,6 +15,9 @@ const launchesQuery = `{
     rocket {
       rocket_name
     }
+    links {
+      video_link
+    }
     details
   }
 }`;
@@ -68,6 +71,7 @@ function Launches({ launches }) {
     const date = launch.launch_date_utc.slice(0, 4);
     list[date] = list[date] || [];
     list[date].push(launch);
+    
     return list;
   }, {});
 
@@ -85,12 +89,20 @@ function Launches({ launches }) {
   );
 }
 
+
+
 function Launch({ launch }) {
   const launchIcon = launch.launch_success ? (
     <i className="icon mdi mdi-rocket" />
   ) : (
     <i className="icon mdi mdi-bomb" />
   );
+  
+
+  
+  
+
+
 
   return (
     <li className="timeline-item timeline-item-detailed right">
@@ -108,6 +120,11 @@ function Launch({ launch }) {
         </div>
         <div className="timeline-summary">
           <p>{launch.details}</p>
+        </div>
+        <div className="timeline-video">
+          <iframe title={launch.mission_name} src="//www.youtube.com/embed/${launchVideoId}">
+          </iframe>
+          
         </div>
       </div>
     </li>
