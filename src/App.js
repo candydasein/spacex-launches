@@ -121,7 +121,6 @@ function Launch({ launch }) {
     console.log(videoId)
 
   return (
-    
     <li className="timeline-item timeline-item-detailed right">
       <div className="timeline-content timeline-type file">
         <div className="timeline-icon">{launchIcon}</div>
@@ -141,7 +140,8 @@ function Launch({ launch }) {
         <div className="timeline-video">
           <iframe 
           title={launch.mission_name} 
-          src={"http://www.youtube.com/embed/${videoId}"}>
+          src={"https://www.youtube.com/embed/" + videoId}>
+          {console.log("https://www.youtube.com/embed/" + videoId)}
           </iframe> 
         </div>
       </div>
