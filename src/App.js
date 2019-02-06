@@ -69,11 +69,22 @@ function Loading() {
 
 function Launches({ launches }) {
   const launchesByDate = launches.reduce((list, launch) => {
-    const date = launch.launch_date_utc.slice(0, 4);
+    //1. take each launch; get the utc date (to 10 digits,
+    //which includes month and day)
+    //and assign it to a variable called date
+    //2. combine all the launches into a an object called list
+    //where the key is date and the value is 
+    //the launch object itself 
+    const date = launch.launch_date_utc.slice(0, 10);
     list[date] = list[date] || [];
     list[date].push(launch);
-    
-    return list;
+    console.log(launch.launch_date_utc)
+    console.log('Object.keys(list).sort() is', Object.keys(list).sort())
+    const sortedList = {}
+    Object.keys(list).sort().forEach(key => {
+      sortedList[key] = list [key]
+    })
+    return sortedList;
   }, {});
 
   //changed key in line 86 to launch.id since there
