@@ -76,13 +76,16 @@ function Launches({ launches }) {
     return list;
   }, {});
 
+  //changed key in line 86 to launch.id since there
+  //is no flight_number key in the API and the id will
+  //be unique each time
   return (
     <ul data-testid="launches" className="timeline timeline-variant">
       {Object.keys(launchesByDate).map(launchDate => (
         <span key={launchDate}>
           <li className="timeline-month">{launchDate}</li>
           {launchesByDate[launchDate].map(launch => (
-            <Launch key={launch.flight_number} launch={launch} />
+            <Launch key={launch.id} launch={launch} />
           ))}
         </span>
       ))}
@@ -108,7 +111,6 @@ function Launch({ launch }) {
     //make sure no 'null' url's enter functions
     if (url !== null) {
     const match = url.match(regExp);
-    console.log('match is', match)
       if (match && match[2].length === 11) {
           return match[2];
       } else {
