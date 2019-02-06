@@ -97,13 +97,15 @@ function Launch({ launch }) {
     <i className="icon mdi mdi-bomb" />
   );
   
-
+  //set incoming YouTube URL to more workable variable
   const youTubeUrl = launch.links.video_link
 
-  //Take YouTube link
+  //edit YouTubeURL to embed rather than watch 
+  //function returns array
   const videoIdGrabber = (url) => {
     // eslint-disable-next-line
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    //make sure no 'null' url's enter functions
     if (url !== null) {
     const match = url.match(regExp);
     console.log('match is', match)
@@ -115,12 +117,9 @@ function Launch({ launch }) {
     } else {
       return 'error'
     }
-    }
-    
+  }
+    //save match[2], the video id itself, as a variable 
     const videoId = videoIdGrabber(youTubeUrl)
-    //const videoId = videoIdGrabber(launch.links.video_link)
-  
-    console.log(videoId)
 
   return (
     <li className="timeline-item timeline-item-detailed right">
@@ -143,7 +142,6 @@ function Launch({ launch }) {
           <iframe 
           title={launch.mission_name} 
           src={"https://www.youtube.com/embed/" + videoId}>
-          {console.log("https://www.youtube.com/embed/" + videoId)}
           </iframe> 
         </div>
       </div>
