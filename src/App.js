@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import { GraphQLClient } from 'graphql-request';
 import { useEffect, useState } from 'react';
+import Comment from './Comment.js'
 
 //.links.video_link call to query
 const launchesQuery = `{
@@ -23,11 +24,23 @@ const launchesQuery = `{
   }
 }`;
 
+
 const client = new GraphQLClient('https://api.spacex.land/graphql/');
 
+/*
+You are trying to encapsulate the logic below into a reusable function so that
+you may run mutliple queries as needed
+*/
 function useGraphQL(query) {
-  const [state, setState] = useState({ loading: true });
 
+  // here we are arbitrarily setting a state object that we want React to
+  // watch for changes. Notice how we're not inside of a component, and yet
+  // we can still have React Virtual reactively respond to changes in this state
+  // just like it does inside of conventional component state objects
+  const [state, setState] = useState({ loading: true });
+ 
+  // useEffect is a function that comes from React, and allows to perfoem
+  // aysnchronous sideeffects 
   useEffect(() => {
     client.request(query).then(
       data => {
@@ -114,6 +127,25 @@ function Launches({ launches }) {
   );
 }
 
+function getCommentsIndex (data) {
+  //request to API
+  
+  //render Comment component with props from server
+  const Comments = data.comments.map((comment, index) => {
+    return (
+      <Comment key={ index }
+      comment={ comment } />
+    )
+  })
+
+  return (
+    <div>
+      {Comments}
+    </div>
+  )
+}
+
+
 function Launch({ launch }) {
   const launchIcon = launch.launch_success ? (
     <i className="icon mdi mdi-rocket" />
@@ -167,6 +199,7 @@ function Launch({ launch }) {
           src={"https://www.youtube.com/embed/" + videoId}>
           </iframe> 
         </div>
+        <button onClick={getCommentsIndex}>Comments</button>
       </div>
     </li>
   );
@@ -179,6 +212,7 @@ export default function App() {
     <div>
       <Header />
       {loading ? <Loading /> : <Launches launches={data.launches} />}
+      <Comment comments={data.comments} />
     </div>
   );
 }
