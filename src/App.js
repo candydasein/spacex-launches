@@ -24,16 +24,26 @@ const launchesQuery = `{
   }
 }`;
 
+const commentsQuery = `{
+  launchCommentsByFlightNumber(flightNumber: {key}) {
+    items {
+      id
+      author
+      body
+      date
+    }
+  }`;
 
-const client = new GraphQLClient('https://api.spacex.land/graphql/');
-
+//const client = new GraphQLClient('https://api.spacex.land/graphql/');
 /*
 You are trying to encapsulate the logic below into a reusable function so that
 you may run mutliple queries as needed
 */
-function useGraphQL(query) {
+function setupGraphQL(endpoint, config = {}) {
+  const client = new GraphQLClient(endpoint, config);
 
-  // here we are arbitrarily setting a state object that we want React to
+  return function useGraphQL(query) {
+   // here we are arbitrarily setting a state object that we want React to
   // watch for changes. Notice how we're not inside of a component, and yet
   // we can still have React Virtual reactively respond to changes in this state
   // just like it does inside of conventional component state objects
@@ -53,7 +63,12 @@ function useGraphQL(query) {
   }, [query]);
 
   return state;
+  };
 }
+
+const useSpaceXGraphQL = setupGraphQL('https://api.spacex.land/graphql/');
+const useSpaceXCommentsGraphQL = setupGraphQL('https://pb3c6uzk5zhrzbcuhssogcpq74.appsync-api.us-east-1.amazonaws.com/graphql')
+
 
 function Header() {
   return (
@@ -127,11 +142,13 @@ function Launches({ launches }) {
   );
 }
 
-function getCommentsIndex (data) {
+
+
+function getCommentsIndex () {
   //request to API
   
   //render Comment component with props from server
-  const Comments = data.comments.map((comment, index) => {
+  const Comments = this.state.comments.map((comment, index) => {
     return (
       <Comment key={ index }
       comment={ comment } />
@@ -206,13 +223,19 @@ function Launch({ launch }) {
 }
 
 export default function App() {
-  const { data, loading } = useGraphQL(launchesQuery);
+  const { data, loading } = useSpaceXGraphQL(launchesQuery);
+  const comments = useSpaceXCommentsGraphQL(commentsQuery, {
+    headers: {
+      authorization: 'BEARER da2-tadwcysgfbgzrjsfmuf7t4huui' 
+    }
+  });
 
+  console.log(comments)
   return (
     <div>
       <Header />
       {loading ? <Loading /> : <Launches launches={data.launches} />}
-      <Comment comments={data.comments} />
+      <Comment comments={comments} />
     </div>
   );
 }
