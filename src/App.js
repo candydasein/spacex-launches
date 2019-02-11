@@ -24,15 +24,16 @@ const launchesQuery = `{
   }
 }`;
 
-const commentsQuery = `{
-  launchCommentsByFlightNumber(flightNumber: {key}) {
+const commentsQuery = flightNumber => `{
+  launchCommentsByFlightNumber(flightNumber: ${flightNumber}) {
     items {
       id
       author
       body
       date
     }
-  }`;
+  }
+`;
 
 //const client = new GraphQLClient('https://api.spacex.land/graphql/');
 /*
@@ -42,33 +43,30 @@ you may run mutliple queries as needed
 function setupGraphQL(endpoint, config = {}) {
   const client = new GraphQLClient(endpoint, config);
 
+  
   return function useGraphQL(query) {
-   // here we are arbitrarily setting a state object that we want React to
-  // watch for changes. Notice how we're not inside of a component, and yet
-  // we can still have React Virtual reactively respond to changes in this state
-  // just like it does inside of conventional component state objects
-  const [state, setState] = useState({ loading: true });
- 
-  // useEffect is a function that comes from React, and allows to perfoem
-  // aysnchronous sideeffects 
-  useEffect(() => {
-    client.request(query).then(
-      data => {
-        setState({ data, loading: false });
-      },
-      err => {
-        console.error(err);
-      }
-    );
-  }, [query]);
+    // here we are arbitrarily setting a state object that we want React to
+    // watch for changes. Notice how we're not inside of a component, and yet
+    // we can still have React Virtual reactively respond to changes in this state
+    // just like it does inside of conventional component state objects
+    const [state, setState] = useState({ loading: true });
 
-  return state;
+    // useEffect is a function that comes from React, and allows to perform
+    // aysnchronous sideeffects 
+    useEffect(() => {
+      client.request(query).then(
+        data => {
+          setState({ data, loading: false });
+        },
+        err => {
+          console.error(err);
+        }
+      );
+    }, [query]);
+
+    return state;
   };
 }
-
-const useSpaceXGraphQL = setupGraphQL('https://api.spacex.land/graphql/');
-const useSpaceXCommentsGraphQL = setupGraphQL('https://pb3c6uzk5zhrzbcuhssogcpq74.appsync-api.us-east-1.amazonaws.com/graphql')
-
 
 function Header() {
   return (
@@ -95,7 +93,7 @@ function Loading() {
   );
 }
 
-function Launches({ launches }) {
+function Launches({ launches, getCommentsIndex }) {
   const launchesByDate = launches.reduce((list, launch) => {
     //1. take each launch; get the utc date (to 10 digits,
     //which includes month and day)
@@ -134,7 +132,7 @@ function Launches({ launches }) {
         <span key={launchDate}>
           <li className="timeline-month">{launchDate}</li>
           {launchesByDate[launchDate].map(launch => (
-            <Launch key={launch.id} launch={launch} />
+            <Launch key={launch.id} launch={launch} getCommentsIndex={getCommentsIndex} />
           ))}
         </span>
       ))}
@@ -144,26 +142,33 @@ function Launches({ launches }) {
 
 
 
-function getCommentsIndex () {
-  //request to API
+// function getCommentsIndex () {
+//   //request to API
+//   const useSpaceXCommentsGraphQL = setupGraphQL('https://pb3c6uzk5zhrzbcuhssogcpq74.appsync-api.us-east-1.amazonaws.com/graphql')
+//   const { data: commentsData, loading: commentsLoading } = useSpaceXCommentsGraphQL(getCommentsQuery('1'), {
+//     headers: {
+//       'x-api-key': 'da2-tadwcysgfbgzrjsfmuf7t4huui' 
+//     }
+//   });
+
   
-  //render Comment component with props from server
-  const Comments = this.state.comments.map((comment, index) => {
-    return (
-      <Comment key={ index }
-      comment={ comment } />
-    )
-  })
+//   // //render Comment component with props from server
+//   // const Comments = this.state.comments.map((comment, index) => {
+//   //   return (
+//   //     <Comment key={ index }
+//   //     comment={ comment } />
+//   //   )
+//   // })
 
-  return (
-    <div>
-      {Comments}
-    </div>
-  )
-}
+//   // return (
+//   //   <div>
+//   //     {Comments}
+//   //   </div>
+//   // )
+// }
 
 
-function Launch({ launch }) {
+function Launch({ launch, getCommentsIndex }) {
   const launchIcon = launch.launch_success ? (
     <i className="icon mdi mdi-rocket" />
   ) : (
@@ -222,20 +227,115 @@ function Launch({ launch }) {
   );
 }
 
+// export default class App extends React.Component {
+//   constructor(props) {
+//     super(props)
+//     this.state = {
+//       commentsData: null
+//     }
+//   }
+
+//   componentDidMount() {
+//     const useSpaceXGraphQL = setupGraphQL('https://api.spacex.land/graphql/');
+//     const { data: launchesData, loading: launchesLoading } = useSpaceXGraphQL(launchesQuery);
+//   }
+
+//   getCommentsIndex = () => {
+//     //request to API
+//     const useSpaceXCommentsGraphQL = setupGraphQL('https://pb3c6uzk5zhrzbcuhssogcpq74.appsync-api.us-east-1.amazonaws.com/graphql')
+//     const { data: commentsData, loading: commentsLoading } = useSpaceXCommentsGraphQL(getCommentsQuery('1'), {
+//       headers: {
+//         'x-api-key': 'da2-tadwcysgfbgzrjsfmuf7t4huui' 
+//       }
+//     })
+//   }
+
+//   render() {
+//     return (
+//       <div>
+//         <Header />
+//         {launchesLoading ? <Loading /> : <Launches launches={launchesData.launches} />}
+//         {this.state.commentsData ? <Comment comments={this.state.commentsData} getCommentsIndex={ this.getCommentsIndex }/> : null }
+        
+//     </div>
+//     )
+//   }
+// }
+
+
 export default function App() {
-  const { data, loading } = useSpaceXGraphQL(launchesQuery);
-  const comments = useSpaceXCommentsGraphQL(commentsQuery, {
+  const useSpaceXGraphQL = setupGraphQL('https://api.spacex.land/graphql/');
+  const useSpaceXCommentsGraphQL = setupGraphQL('https://pb3c6uzk5zhrzbcuhssogcpq74.appsync-api.us-east-1.amazonaws.com/graphql');
+  const { data: launchesData, loading: launchesLoading } = useSpaceXGraphQL(launchesQuery);
+  const { data: commentsData, loading: commentsLoading } = useSpaceXCommentsGraphQL(commentsQuery('1'), {
     headers: {
-      authorization: 'BEARER da2-tadwcysgfbgzrjsfmuf7t4huui' 
+      'x-api-key': 'da2-tadwcysgfbgzrjsfmuf7t4huui' 
     }
   });
 
-  console.log(comments)
+  const [state, setState] = useState({ commentsData: null });
+
+  const getCommentsIndex = (endpoint, config = {}) => {
+    
+    const client = new GraphQLClient(endpoint, config)
+      
+      
+  
+    return function useGraphQL(query) {
+      // here we are arbitrarily setting a state object that we want React to
+      // watch for changes. Notice how we're not inside of a component, and yet
+      // we can still have React Virtual reactively respond to changes in this state
+      // just like it does inside of conventional component state objects
+      const [state, setState] = useState({ loading: true });
+      console.log('got here')
+      // useEffect is a function that comes from React, and allows to perform
+      // aysnchronous sideeffects 
+      useEffect(() => {
+        client.request(query).then(
+          data => {
+            setState({ data, loading: false });
+          },
+          err => {
+            console.error(err);
+          }
+        );
+      }, [query]);
+      console.log(state)
+      return state;
+    
+    };
+
+    // request to API
+    // const { data, loading } = useSpaceXCommentsGraphQL(getCommentsQuery('1'), {
+    //   headers: {
+    //     'x-api-key': 'da2-tadwcysgfbgzrjsfmuf7t4huui' 
+    //   }
+    // });
+
+
+    //setState({commentsData: data})
+
+  
+    // //render Comment component with props from server
+    // const Comments = this.state.comments.map((comment, index) => {
+    //   return (
+    //     <Comment key={ index }
+    //     comment={ comment } />
+    //   )
+    // })
+
+    // return (
+    //   <div>
+    //     {Comments}
+    //   </div>
+    // )
+  }
+
   return (
     <div>
       <Header />
-      {loading ? <Loading /> : <Launches launches={data.launches} />}
-      <Comment comments={comments} />
+      {launchesLoading ? <Loading /> : <Launches launches={launchesData.launches} getCommentsIndex={getCommentsIndex}/>}
+      {state.commentsData ? <Comment comments={commentsData}/> : null }
     </div>
   );
 }
