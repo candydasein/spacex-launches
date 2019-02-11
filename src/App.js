@@ -35,7 +35,7 @@ const commentsQuery = flightNumber => `{
   }
 `;
 
-//const client = new GraphQLClient('https://api.spacex.land/graphql/');
+
 /*
 You are trying to encapsulate the logic below into a reusable function so that
 you may run mutliple queries as needed
@@ -123,7 +123,7 @@ function Launches({ launches, getCommentsIndex }) {
     return sortedList;
   }, {});
 
-  //changed key in line 86 to launch.id since there
+  //changed key to launch.id since there
   //is no flight_number key in the API and the id will
   //be unique each time
   return (
@@ -139,33 +139,6 @@ function Launches({ launches, getCommentsIndex }) {
     </ul>
   );
 }
-
-
-
-// function getCommentsIndex () {
-//   //request to API
-//   const useSpaceXCommentsGraphQL = setupGraphQL('https://pb3c6uzk5zhrzbcuhssogcpq74.appsync-api.us-east-1.amazonaws.com/graphql')
-//   const { data: commentsData, loading: commentsLoading } = useSpaceXCommentsGraphQL(getCommentsQuery('1'), {
-//     headers: {
-//       'x-api-key': 'da2-tadwcysgfbgzrjsfmuf7t4huui' 
-//     }
-//   });
-
-  
-//   // //render Comment component with props from server
-//   // const Comments = this.state.comments.map((comment, index) => {
-//   //   return (
-//   //     <Comment key={ index }
-//   //     comment={ comment } />
-//   //   )
-//   // })
-
-//   // return (
-//   //   <div>
-//   //     {Comments}
-//   //   </div>
-//   // )
-// }
 
 
 function Launch({ launch, getCommentsIndex }) {
@@ -227,42 +200,6 @@ function Launch({ launch, getCommentsIndex }) {
   );
 }
 
-// export default class App extends React.Component {
-//   constructor(props) {
-//     super(props)
-//     this.state = {
-//       commentsData: null
-//     }
-//   }
-
-//   componentDidMount() {
-//     const useSpaceXGraphQL = setupGraphQL('https://api.spacex.land/graphql/');
-//     const { data: launchesData, loading: launchesLoading } = useSpaceXGraphQL(launchesQuery);
-//   }
-
-//   getCommentsIndex = () => {
-//     //request to API
-//     const useSpaceXCommentsGraphQL = setupGraphQL('https://pb3c6uzk5zhrzbcuhssogcpq74.appsync-api.us-east-1.amazonaws.com/graphql')
-//     const { data: commentsData, loading: commentsLoading } = useSpaceXCommentsGraphQL(getCommentsQuery('1'), {
-//       headers: {
-//         'x-api-key': 'da2-tadwcysgfbgzrjsfmuf7t4huui' 
-//       }
-//     })
-//   }
-
-//   render() {
-//     return (
-//       <div>
-//         <Header />
-//         {launchesLoading ? <Loading /> : <Launches launches={launchesData.launches} />}
-//         {this.state.commentsData ? <Comment comments={this.state.commentsData} getCommentsIndex={ this.getCommentsIndex }/> : null }
-        
-//     </div>
-//     )
-//   }
-// }
-
-
 export default function App() {
   const useSpaceXGraphQL = setupGraphQL('https://api.spacex.land/graphql/');
   const useSpaceXCommentsGraphQL = setupGraphQL('https://pb3c6uzk5zhrzbcuhssogcpq74.appsync-api.us-east-1.amazonaws.com/graphql');
@@ -305,30 +242,6 @@ export default function App() {
     
     };
 
-    // request to API
-    // const { data, loading } = useSpaceXCommentsGraphQL(getCommentsQuery('1'), {
-    //   headers: {
-    //     'x-api-key': 'da2-tadwcysgfbgzrjsfmuf7t4huui' 
-    //   }
-    // });
-
-
-    //setState({commentsData: data})
-
-  
-    // //render Comment component with props from server
-    // const Comments = this.state.comments.map((comment, index) => {
-    //   return (
-    //     <Comment key={ index }
-    //     comment={ comment } />
-    //   )
-    // })
-
-    // return (
-    //   <div>
-    //     {Comments}
-    //   </div>
-    // )
   }
 
   return (
